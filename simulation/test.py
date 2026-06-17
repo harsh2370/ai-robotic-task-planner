@@ -26,6 +26,10 @@ cube = p.loadURDF(
     basePosition=[0.5, 0, 0.02]
 )
 
+cube_position, cube_orientation = p.getBasePositionAndOrientation(cube)
+
+print("Cube Position:", cube_position)
+print("Cube Orientation:", cube_orientation)
 
 def move_robot(position, steps=300):
     joint_positions = p.calculateInverseKinematics(
