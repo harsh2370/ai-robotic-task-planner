@@ -4,8 +4,11 @@ import time
 
 from robot_controller import initialize
 from action_executor import execute_action
-from command_runner import parse_command
 from world import OBJECTS
+
+import json
+from command_runner import parse_command
+from llm_planner import get_task_plan_from_llm
 
 
 p.connect(p.GUI)
@@ -110,12 +113,21 @@ p.createMultiBody(
     baseVisualShapeIndex=side_visual,
     basePosition=[0.85, 0.35, 0.04]
 )
-
 initialize(robot, loaded_objects)
+PLANNER_MODE = "rule_based"
+# Options:
+# "rule_based" -> uses our simple command parser
+# "llm"        -> uses Qwen through Ollama
 
 command = input("Enter command: ")
 
-task_plan = parse_command(command)
+if PLANNER_MODE == "llm":
+    task_plan = get_task_plan_from_llm(command)
+else:
+    task_plan = parse_command(command)
+
+print("\nGenerated Task Plan:")
+print(json.dumps({"steps": task_plan}, indent=4))
 
 for action in task_plan:
     execute_action(action)
