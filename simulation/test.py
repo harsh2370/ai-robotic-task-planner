@@ -114,7 +114,7 @@ p.createMultiBody(
     basePosition=[0.85, 0.35, 0.04]
 )
 initialize(robot, loaded_objects)
-PLANNER_MODE = "rule_based"
+PLANNER_MODE = "llm"
 # Options:
 # "rule_based" -> uses our simple command parser
 # "llm"        -> uses Qwen through Ollama
