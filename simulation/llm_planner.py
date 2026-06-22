@@ -12,9 +12,9 @@ def build_prompt(user_command):
     prompt = f"""
 You are a robotic task planner.
 
-Your job is to convert a user's natural language command into a JSON task plan.
+Convert the user's natural language command into a JSON task plan.
 
-You must only use these actions:
+Allowed actions:
 - pick
 - place
 
@@ -27,9 +27,11 @@ Available locations:
 Rules:
 1. Output only valid JSON.
 2. Do not explain anything.
-3. Do not add extra text.
-4. Use this exact format:
+3. Do not add markdown.
+4. Do not add extra text.
+5. Use only available objects and locations.
 
+Required JSON format:
 {{
   "steps": [
     {{"action": "pick", "object": "object_name"}},
@@ -57,15 +59,6 @@ Output:
   ]
 }}
 
-User command: put the box on the right
-Output:
-{{
-  "steps": [
-    {{"action": "pick", "object": "box"}},
-    {{"action": "place", "location": "right"}}
-  ]
-}}
-
 Now convert this command:
 
 User command: {user_command}
@@ -75,26 +68,68 @@ Output:
     return prompt
 
 
+def extract_json_from_text(text):
+    text = text.strip()
+
+    # Remove markdown code block markers if the model adds them
+    text = text.replace("```json", "")
+    text = text.replace("```", "")
+
+    start_index = text.find("{")
+    end_index = text.rfind("}")
+
+    if start_index == -1 or end_index == -1:
+        print("No JSON object found in LLM output.")
+        return None
+
+    json_text = text[start_index:end_index + 1]
+
+    try:
+        return json.loads(json_text)
+
+    except json.JSONDecodeError:
+        print("Could not parse JSON from LLM output.")
+        print("Extracted text was:")
+        print(json_text)
+        return None
+
+
 def get_task_plan_from_llm(user_command):
     prompt = build_prompt(user_command)
 
-    response = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": MODEL_NAME,
-            "prompt": prompt,
-            "stream": False
-        }
-    )
+    try:
+        response = requests.post(
+            OLLAMA_URL,
+            json={
+                "model": MODEL_NAME,
+                "prompt": prompt,
+                "stream": False
+            },
+            timeout=120
+        )
+
+    except requests.exceptions.RequestException as error:
+        print("Could not connect to Ollama.")
+        print(error)
+        return []
 
     result = response.json()
-    raw_output = result["response"]
+    raw_output = result.get("response", "")
 
-    try:
-        task_plan = json.loads(raw_output)
-        return task_plan["steps"]
+    print("\nRaw LLM Output:")
+    print(raw_output)
 
-    except json.JSONDecodeError:
-        print("LLM returned invalid JSON:")
-        print(raw_output)
+    parsed_output = extract_json_from_text(raw_output)
+
+    if parsed_output is None:
         return []
+
+    if "steps" not in parsed_output:
+        print("Invalid LLM output: Missing 'steps' key.")
+        return []
+
+    if not isinstance(parsed_output["steps"], list):
+        print("Invalid LLM output: 'steps' must be a list.")
+        return []
+
+    return parsed_output["steps"]

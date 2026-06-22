@@ -10,6 +10,7 @@ import json
 from command_runner import parse_command
 from llm_planner import get_task_plan_from_llm
 from plan_validator import validate_task_plan
+from execution_logger import log_execution
 
 
 p.connect(p.GUI)
@@ -122,20 +123,42 @@ PLANNER_MODE = "llm"
 
 command = input("Enter command: ")
 
+planner_used = PLANNER_MODE
+
 if PLANNER_MODE == "llm":
     task_plan = get_task_plan_from_llm(command)
+
+    if not task_plan:
+        print("LLM planner failed or returned empty plan.")
+        print("Falling back to rule-based planner...")
+        planner_used = "rule_based_fallback"
+        task_plan = parse_command(command)
+
 else:
     task_plan = parse_command(command)
+
+print("\nPlanner Used:")
+print(planner_used)
 
 print("\nGenerated Task Plan:")
 print(json.dumps({"steps": task_plan}, indent=4))
 
-if validate_task_plan(task_plan):
+validation_passed = validate_task_plan(task_plan)
+
+log_execution(
+    command=command,
+    planner_used=planner_used,
+    task_plan=task_plan,
+    validation_passed=validation_passed
+)
+
+if validation_passed:
     for action in task_plan:
         execute_action(action)
 else:
     print("Task plan validation failed. Robot will not execute.")
 
+    
 while True:
     p.stepSimulation()
     time.sleep(1 / 240)
