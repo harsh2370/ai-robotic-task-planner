@@ -9,6 +9,7 @@ from world import OBJECTS
 import json
 from command_runner import parse_command
 from llm_planner import get_task_plan_from_llm
+from plan_validator import validate_task_plan
 
 
 p.connect(p.GUI)
@@ -129,8 +130,11 @@ else:
 print("\nGenerated Task Plan:")
 print(json.dumps({"steps": task_plan}, indent=4))
 
-for action in task_plan:
-    execute_action(action)
+if validate_task_plan(task_plan):
+    for action in task_plan:
+        execute_action(action)
+else:
+    print("Task plan validation failed. Robot will not execute.")
 
 while True:
     p.stepSimulation()
