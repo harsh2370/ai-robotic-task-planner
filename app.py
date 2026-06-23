@@ -1,0 +1,66 @@
+from flask import Flask, render_template, request
+import json
+import sys
+from pathlib import Path
+
+# Add simulation folder to Python path
+BASE_DIR = Path(__file__).parent
+SIMULATION_DIR = BASE_DIR / "simulation"
+sys.path.append(str(SIMULATION_DIR))
+
+from command_runner import parse_command
+from llm_planner import get_task_plan_from_llm
+from plan_validator import validate_task_plan
+from execution_logger import log_execution
+
+
+app = Flask(__name__)
+
+PLANNER_MODE = "llm"
+
+
+def generate_task_plan(command):
+    planner_used = PLANNER_MODE
+
+    if PLANNER_MODE == "llm":
+        task_plan = get_task_plan_from_llm(command)
+
+        if not task_plan:
+            planner_used = "rule_based_fallback"
+            task_plan = parse_command(command)
+    else:
+        task_plan = parse_command(command)
+
+    validation_passed = validate_task_plan(task_plan)
+
+    log_execution(
+        command=command,
+        planner_used=planner_used,
+        task_plan=task_plan,
+        validation_passed=validation_passed
+    )
+
+    return planner_used, task_plan, validation_passed
+
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    result = None
+
+    if request.method == "POST":
+        command = request.form.get("command")
+
+        planner_used, task_plan, validation_passed = generate_task_plan(command)
+
+        result = {
+            "command": command,
+            "planner_used": planner_used,
+            "task_plan": json.dumps({"steps": task_plan}, indent=4),
+            "validation_passed": validation_passed
+        }
+
+    return render_template("index.html", result=result)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
