@@ -109,13 +109,14 @@
         }
 
         form {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto;
             gap: 12px;
             margin-top: 18px;
         }
 
-        input {
-            flex: 1;
+        input[type="text"] {
+            width: 100%;
             padding: 16px 18px;
             border-radius: 14px;
             border: 1px solid rgba(148, 163, 184, 0.25);
@@ -125,26 +126,42 @@
             outline: none;
         }
 
-        input:focus {
+        input[type="text"]:focus {
             border-color: #38bdf8;
             box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
         }
 
         button {
             border: none;
             border-radius: 14px;
-            padding: 0 24px;
+            padding: 0 22px;
             background: linear-gradient(135deg, #0ea5e9, #7c3aed);
             color: white;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.2s ease, opacity 0.2s ease;
+            white-space: nowrap;
         }
 
         button:hover {
             transform: translateY(-2px);
             opacity: 0.95;
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .execute-btn {
+            background: linear-gradient(135deg, #22c55e, #0ea5e9);
         }
 
         .examples {
@@ -214,6 +231,16 @@
             font-weight: 700;
         }
 
+        .execution-box {
+            margin-top: 10px;
+            padding: 13px 15px;
+            border-radius: 14px;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.25);
+            color: #bae6fd;
+            line-height: 1.6;
+        }
+
         pre {
             margin: 0;
             background: #020617;
@@ -233,13 +260,17 @@
             font-size: 13px;
         }
 
-        @media (max-width: 850px) {
+        @media (max-width: 900px) {
             .hero,
             .result-grid {
                 grid-template-columns: 1fr;
             }
 
             form {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
                 flex-direction: column;
             }
 
@@ -253,6 +284,12 @@
 
             body {
                 padding: 18px;
+            }
+
+            .navbar {
+                gap: 15px;
+                align-items: flex-start;
+                flex-direction: column;
             }
         }
     </style>
@@ -275,31 +312,46 @@
 
             <p class="subtitle">
                 Enter a command in simple English. The system converts it into a structured JSON task plan,
-                validates it, and prepares it for robotic execution.
+                validates it, and can execute the task inside the PyBullet robotic simulation.
             </p>
 
             <div class="command-box">
-                <form method="POST" onsubmit="setLoading()">
+                <form method="POST" onsubmit="setLoading(event)">
                     <input
                         id="commandInput"
                         type="text"
                         name="command"
                         placeholder="Example: move the bottle to the tray"
+                        value="{% if result %}{{ result.command }}{% endif %}"
                         required
                     >
-                    <button id="submitBtn" type="submit">Generate Plan</button>
+
+                    <input type="hidden" name="action" id="actionInput" value="generate">
+
+                    <div class="button-group">
+                        <button id="generateBtn" type="submit" onclick="setAction('generate')">
+                            Generate Plan
+                        </button>
+
+                        <button id="executeBtn" class="execute-btn" type="submit" onclick="setAction('execute')">
+                            Execute Simulation
+                        </button>
+                    </div>
                 </form>
 
                 <div class="examples">
                     <div class="example-btn" onclick="setCommand('move the bottle to the tray')">
                         move bottle to tray
                     </div>
+
                     <div class="example-btn" onclick="setCommand('place the cup on the left')">
                         place cup left
                     </div>
+
                     <div class="example-btn" onclick="setCommand('put the box on the right')">
                         put box right
                     </div>
+
                     <div class="example-btn" onclick="setCommand('move the phone to the tray')">
                         invalid test
                     </div>
@@ -313,7 +365,7 @@
                 <div class="pipeline-step"><strong>2.</strong> Qwen / Fallback Planner</div>
                 <div class="pipeline-step"><strong>3.</strong> JSON Task Plan</div>
                 <div class="pipeline-step"><strong>4.</strong> Plan Validator</div>
-                <div class="pipeline-step"><strong>5.</strong> Robot Execution Pipeline</div>
+                <div class="pipeline-step"><strong>5.</strong> PyBullet Simulation</div>
             </div>
         </div>
     </div>
@@ -339,6 +391,13 @@
                     <span class="status-fail">Failed</span>
                 {% endif %}
             </div>
+
+            {% if result.execution_status %}
+            <div class="info-row">
+                <div class="label">Execution Status</div>
+                <div class="execution-box">{{ result.execution_status }}</div>
+            </div>
+            {% endif %}
         </div>
 
         <div class="card">
@@ -359,10 +418,26 @@
         document.getElementById("commandInput").value = command;
     }
 
-    function setLoading() {
-        const button = document.getElementById("submitBtn");
-        button.innerText = "Generating...";
-        button.disabled = true;
+    function setAction(action) {
+        document.getElementById("actionInput").value = action;
+    }
+
+    function setLoading(event) {
+        const action = document.getElementById("actionInput").value;
+
+        const generateBtn = document.getElementById("generateBtn");
+        const executeBtn = document.getElementById("executeBtn");
+
+        if (action === "execute") {
+            executeBtn.innerText = "Starting...";
+        } else {
+            generateBtn.innerText = "Generating...";
+        }
+
+        setTimeout(() => {
+            generateBtn.disabled = true;
+            executeBtn.disabled = true;
+        }, 50);
     }
 </script>
 

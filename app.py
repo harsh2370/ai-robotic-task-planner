@@ -3,6 +3,8 @@ import json
 import sys
 from pathlib import Path
 
+import subprocess
+
 # Add simulation folder to Python path
 BASE_DIR = Path(__file__).parent
 SIMULATION_DIR = BASE_DIR / "simulation"
@@ -42,6 +44,18 @@ def generate_task_plan(command):
 
     return planner_used, task_plan, validation_passed
 
+def launch_simulation(command):
+    test_file = SIMULATION_DIR / "test.py"
+
+    subprocess.Popen(
+        [
+            sys.executable,
+            str(test_file),
+            command
+        ],
+        cwd=str(BASE_DIR),
+        creationflags=subprocess.CREATE_NEW_CONSOLE
+    )
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -49,18 +63,29 @@ def index():
 
     if request.method == "POST":
         command = request.form.get("command")
+        action = request.form.get("action")
+        print("Frontend action received:", action)
 
         planner_used, task_plan, validation_passed = generate_task_plan(command)
+
+        execution_status = None
+
+        if action == "execute":
+            if validation_passed:
+                launch_simulation(command)
+                execution_status = "Simulation started successfully in PyBullet."
+            else:
+                execution_status = "Simulation not started because validation failed."
 
         result = {
             "command": command,
             "planner_used": planner_used,
             "task_plan": json.dumps({"steps": task_plan}, indent=4),
-            "validation_passed": validation_passed
+            "validation_passed": validation_passed,
+            "execution_status": execution_status
         }
 
     return render_template("index.html", result=result)
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

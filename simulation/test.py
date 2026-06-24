@@ -12,6 +12,7 @@ from llm_planner import get_task_plan_from_llm
 from plan_validator import validate_task_plan
 from execution_logger import log_execution
 
+import sys
 
 p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -121,7 +122,10 @@ PLANNER_MODE = "llm"
 # "rule_based" -> uses our simple command parser
 # "llm"        -> uses Qwen through Ollama
 
-command = input("Enter command: ")
+if len(sys.argv) > 1:
+    command = " ".join(sys.argv[1:])
+else:
+    command = input("Enter command: ")
 
 planner_used = PLANNER_MODE
 
