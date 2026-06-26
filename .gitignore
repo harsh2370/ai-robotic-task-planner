@@ -2,4 +2,4 @@ venv/
 __pycache__/
 *.pyc
 .vscode/
-simulation/execution_logs.jsonl
+simulation/execution_logs.jsonlgit commit -m "Day 6: Added frontend simulation execution"
