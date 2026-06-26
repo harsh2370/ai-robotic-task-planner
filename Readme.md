@@ -18,7 +18,11 @@ The main goal is to make robotic task execution more flexible, safe, and user-fr
 
 - Natural language command input
 - Qwen 2.5 based LLM planner through Ollama
+<<<<<<< HEAD
 - Rule-based fallback plannerV
+=======
+- Rule-based fallback planner
+>>>>>>> 875ecccd2bf45227be5246ed5e6532b50a076443
 - JSON task plan generation
 - Task plan validation before execution
 - PyBullet simulation with Franka Panda robotic arm
@@ -260,4 +264,8 @@ The project currently supports an end-to-end workflow from natural language comm
 - Improve simulation speed
 - Add cloud-based LLM support
 - Integrate ROS 2 or MoveIt for real robot compatibility
+<<<<<<< HEAD
 - Use execution logs to build a project-specific dataset
+=======
+- Use execution logs to build a project-specific dataset
+>>>>>>> 875ecccd2bf45227be5246ed5e6532b50a076443
