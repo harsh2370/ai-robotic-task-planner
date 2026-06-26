@@ -13,7 +13,7 @@ sys.path.append(str(SIMULATION_DIR))
 from command_runner import parse_command
 from llm_planner import get_task_plan_from_llm
 from plan_validator import validate_task_plan
-from execution_logger import log_execution
+from execution_logger import log_execution, read_recent_logs
 
 
 app = Flask(__name__)
@@ -84,8 +84,7 @@ def index():
             "validation_passed": validation_passed,
             "execution_status": execution_status
         }
-
-    return render_template("index.html", result=result)
-
+    recent_logs = read_recent_logs()
+    return render_template("index.html", result=result, recent_logs=recent_logs)
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)

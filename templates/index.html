@@ -253,6 +253,48 @@
             font-size: 14px;
         }
 
+        .logs-card {
+            margin-top: 25px;
+        }
+
+        .logs-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .log-item {
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 14px;
+            padding: 14px 16px;
+        }
+
+        .log-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .log-command {
+            color: #f8fafc;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .log-meta {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .small-status {
+            padding: 5px 9px;
+            font-size: 12px;
+        }
+
         .footer {
             margin-top: 30px;
             text-align: center;
@@ -290,6 +332,12 @@
                 gap: 15px;
                 align-items: flex-start;
                 flex-direction: column;
+            }
+
+            .log-top {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
             }
         }
     </style>
@@ -403,6 +451,36 @@
         <div class="card">
             <div class="label">Generated JSON Task Plan</div>
             <pre>{{ result.task_plan }}</pre>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if recent_logs %}
+    <div class="card logs-card">
+        <div class="label">Recent Execution Logs</div>
+
+        <div class="logs-list">
+            {% for log in recent_logs %}
+            <div class="log-item">
+                <div class="log-top">
+                    <span>{{ log.timestamp }}</span>
+
+                    {% if log.validation_passed %}
+                        <span class="status-pass small-status">Passed</span>
+                    {% else %}
+                        <span class="status-fail small-status">Failed</span>
+                    {% endif %}
+                </div>
+
+                <div class="log-command">
+                    {{ log.command }}
+                </div>
+
+                <div class="log-meta">
+                    Planner: {{ log.planner_used }}
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
     {% endif %}
