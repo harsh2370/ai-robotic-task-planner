@@ -1,41 +1,79 @@
 from world import OBJECTS, LOCATIONS
 
 
-def parse_command(command):
+ACTION_WORDS = [
+    "move",
+    "place",
+    "put",
+    "bring",
+    "transfer",
+    "keep",
+    "shift",
+    "take"
+]
+
+
+OBJECT_ALIASES = {
+    "bottle": ["bottle", "water bottle"],
+    "cup": ["cup", "glass", "mug"],
+    "box": ["box", "cube", "block"]
+}
+
+
+LOCATION_ALIASES = {
+    "tray": ["tray", "container", "basket", "holder"],
+    "left": ["left", "left side", "left area"],
+    "right": ["right", "right side", "right area"],
+    "center": ["center", "middle", "centre"]
+}
+
+
+def clean_command(command):
     command = command.lower()
 
-    # Remove simple extra words
-    words = command.replace(".", "").replace(",", "").split()
+    symbols = [".", ",", "!", "?", "\"", "'"]
 
-    available_objects = list(OBJECTS.keys())
-    available_locations = list(LOCATIONS.keys())
+    for symbol in symbols:
+        command = command.replace(symbol, "")
 
-    detected_object = None
-    detected_location = None
+    return command
 
-    # Detect object name from command
-    for obj in available_objects:
-        if obj in words:
-            detected_object = obj
-            break
 
-    # Detect location name from command
-    for loc in available_locations:
-        if loc in words:
-            detected_location = loc
-            break
+def detect_object(command):
+    for object_name, aliases in OBJECT_ALIASES.items():
+        for alias in aliases:
+            if alias in command and object_name in OBJECTS:
+                return object_name
 
-    # Detect action words
-    move_words = ["move", "place", "put", "bring", "transfer"]
+    return None
 
-    detected_action = None
+
+def detect_location(command):
+    for location_name, aliases in LOCATION_ALIASES.items():
+        for alias in aliases:
+            if alias in command and location_name in LOCATIONS:
+                return location_name
+
+    return None
+
+
+def detect_action(command):
+    words = command.split()
 
     for word in words:
-        if word in move_words:
-            detected_action = "move"
-            break
+        if word in ACTION_WORDS:
+            return "move"
 
-    # Convert natural command into task plan
+    return None
+
+
+def parse_command(command):
+    command = clean_command(command)
+
+    detected_action = detect_action(command)
+    detected_object = detect_object(command)
+    detected_location = detect_location(command)
+
     if detected_action == "move" and detected_object and detected_location:
         return [
             {
@@ -49,12 +87,15 @@ def parse_command(command):
         ]
 
     print("Could not understand command.")
-    print("Available objects:", available_objects)
-    print("Available locations:", available_locations)
+    print("Detected action:", detected_action)
+    print("Detected object:", detected_object)
+    print("Detected location:", detected_location)
+    print("Available objects:", list(OBJECTS.keys()))
+    print("Available locations:", list(LOCATIONS.keys()))
     print("Example commands:")
-    print("- move bottle tray")
     print("- move the bottle to the tray")
-    print("- place cup left")
-    print("- put the box in the right")
+    print("- keep the bottle in the container")
+    print("- shift the cup to the left side")
+    print("- take the box and place it on the right")
 
     return []
