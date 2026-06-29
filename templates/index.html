@@ -359,8 +359,9 @@
             </h1>
 
             <p class="subtitle">
-                Enter a command in simple English. The system converts it into a structured JSON task plan,
-                validates it, and can execute the task inside the PyBullet robotic simulation.
+                Enter a command in simple English. The system supports flexible instructions,
+                converts them into a structured JSON task plan, validates the plan, and can execute
+                the task inside the PyBullet robotic simulation.
             </p>
 
             <div class="command-box">
@@ -369,7 +370,7 @@
                         id="commandInput"
                         type="text"
                         name="command"
-                        placeholder="Example: move the bottle to the tray"
+                        placeholder="Example: keep the bottle in the tray"
                         value="{% if result %}{{ result.command }}{% endif %}"
                         required
                     >
@@ -392,12 +393,20 @@
                         move bottle to tray
                     </div>
 
-                    <div class="example-btn" onclick="setCommand('place the cup on the left')">
-                        place cup left
+                    <div class="example-btn" onclick="setCommand('keep the bottle in the tray')">
+                        keep bottle in tray
                     </div>
 
-                    <div class="example-btn" onclick="setCommand('put the box on the right')">
-                        put box right
+                    <div class="example-btn" onclick="setCommand('shift the cup to the left side')">
+                        shift cup left side
+                    </div>
+
+                    <div class="example-btn" onclick="setCommand('take the box and place it on the right')">
+                        take box to right
+                    </div>
+
+                    <div class="example-btn" onclick="setCommand('put bottle inside container')">
+                        put bottle in container
                     </div>
 
                     <div class="example-btn" onclick="setCommand('move the phone to the tray')">
