@@ -89,6 +89,7 @@
         .pipeline {
             display: grid;
             gap: 12px;
+            margin-top: 12px;
         }
 
         .pipeline-step {
@@ -184,6 +185,39 @@
         .example-btn:hover {
             border-color: #38bdf8;
             color: #7dd3fc;
+        }
+
+        .workspace-card {
+            margin-bottom: 25px;
+        }
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            padding: 9px 13px;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.12);
+            border: 1px solid rgba(14, 165, 233, 0.28);
+            color: #7dd3fc;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .location-tag {
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.28);
+            color: #d8b4fe;
         }
 
         .result-grid {
@@ -308,6 +342,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+
             form {
                 grid-template-columns: 1fr;
             }
@@ -370,7 +408,7 @@
                         id="commandInput"
                         type="text"
                         name="command"
-                        placeholder="Example: keep the bottle in the tray"
+                        placeholder="Example: move the spoon to the tray"
                         value="{% if result %}{{ result.command }}{% endif %}"
                         required
                     >
@@ -405,8 +443,16 @@
                         take box to right
                     </div>
 
-                    <div class="example-btn" onclick="setCommand('put bottle inside container')">
-                        put bottle in container
+                    <div class="example-btn" onclick="setCommand('move the spoon to the tray')">
+                        move spoon to tray
+                    </div>
+
+                    <div class="example-btn" onclick="setCommand('place the plate on the front')">
+                        plate to front
+                    </div>
+
+                    <div class="example-btn" onclick="setCommand('shift the cup to the back')">
+                        cup to back
                     </div>
 
                     <div class="example-btn" onclick="setCommand('move the phone to the tray')">
@@ -417,12 +463,36 @@
         </div>
 
         <div class="card">
+            <div class="label">System Pipeline</div>
+
             <div class="pipeline">
                 <div class="pipeline-step"><strong>1.</strong> User Command</div>
                 <div class="pipeline-step"><strong>2.</strong> Qwen / Fallback Planner</div>
                 <div class="pipeline-step"><strong>3.</strong> JSON Task Plan</div>
                 <div class="pipeline-step"><strong>4.</strong> Plan Validator</div>
                 <div class="pipeline-step"><strong>5.</strong> PyBullet Simulation</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card workspace-card">
+        <div class="workspace-grid">
+            <div>
+                <div class="label">Supported Objects</div>
+                <div class="tag-list">
+                    {% for object in objects %}
+                        <span class="tag">{{ object }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div>
+                <div class="label">Target Locations</div>
+                <div class="tag-list">
+                    {% for location in locations %}
+                        <span class="tag location-tag">{{ location }}</span>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

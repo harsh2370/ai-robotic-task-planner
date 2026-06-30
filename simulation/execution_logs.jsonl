@@ -24,3 +24,7 @@
 {"timestamp": "2026-06-29 20:11:41", "command": "if (Get-Command deactivate -ErrorAction SilentlyContinue) { deactivate }", "planner_used": "rule_based_fallback", "task_plan": [], "validation_passed": true}
 {"timestamp": "2026-06-29 20:12:40", "command": "keep the bottle in the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "bottle"}, {"action": "place", "location": "tray"}], "validation_passed": true}
 {"timestamp": "2026-06-30 23:03:16", "command": "move spoon to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "spoon"}, {"action": "place", "location": "tray"}], "validation_passed": true}
+{"timestamp": "2026-06-30 23:26:47", "command": "keep the bottle in the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "bottle"}, {"action": "place", "location": "tray"}], "validation_passed": true}
+{"timestamp": "2026-06-30 23:26:53", "command": "move the bottle to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "bottle"}, {"action": "place", "location": "tray"}], "validation_passed": true}
+{"timestamp": "2026-06-30 23:26:59", "command": "keep the bottle in the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "bottle"}, {"action": "place", "location": "tray"}], "validation_passed": true}
+{"timestamp": "2026-06-30 23:27:06", "command": "move the bottle to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "bottle"}, {"action": "place", "location": "tray"}], "validation_passed": true}
