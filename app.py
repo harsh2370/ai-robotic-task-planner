@@ -19,6 +19,27 @@ from world import OBJECTS, LOCATIONS
 
 app = Flask(__name__)
 
+def get_object_specs():
+    object_specs = []
+
+    for object_name, object_data in OBJECTS.items():
+        shape = object_data["shape"]
+
+        if shape == "cylinder":
+            size_info = f"radius: {object_data['radius']}, height: {object_data['height']}"
+        elif shape == "box":
+            size_info = f"half extents: {object_data['half_extents']}"
+        else:
+            size_info = "custom shape"
+
+        object_specs.append({
+            "name": object_name,
+            "shape": shape,
+            "size_info": size_info
+        })
+
+    return object_specs
+
 PLANNER_MODE = "llm"
 
 
@@ -91,7 +112,8 @@ def index():
     result=result,
     recent_logs=recent_logs,
     objects=list(OBJECTS.keys()),
-    locations=list(LOCATIONS.keys())
+    locations=list(LOCATIONS.keys()),
+    object_specs=get_object_specs()
 )
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)

@@ -220,6 +220,38 @@
             color: #d8b4fe;
         }
 
+        .object-spec-card {
+            margin-bottom: 25px;
+        }
+
+        .object-spec-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-top: 15px;
+        }
+
+        .object-spec-item {
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 16px;
+            padding: 15px;
+        }
+
+        .object-name {
+            color: #f8fafc;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: capitalize;
+        }
+
+        .object-detail {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
         .result-grid {
             display: grid;
             grid-template-columns: 0.9fr 1.1fr;
@@ -343,6 +375,10 @@
             }
 
             .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .object-spec-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -496,6 +532,22 @@
             </div>
         </div>
     </div>
+
+    {% if object_specs %}
+    <div class="card object-spec-card">
+        <div class="label">Object Specifications</div>
+
+        <div class="object-spec-grid">
+            {% for object in object_specs %}
+            <div class="object-spec-item">
+                <div class="object-name">{{ object.name }}</div>
+                <div class="object-detail">Shape: {{ object.shape }}</div>
+                <div class="object-detail">{{ object.size_info }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     {% if result %}
     <div class="result-grid">
