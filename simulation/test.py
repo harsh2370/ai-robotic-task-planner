@@ -25,13 +25,66 @@ robot = p.loadURDF(
     useFixedBase=True
 )
 
+def load_workspace_object(object_name, object_data):
+    shape = object_data["shape"]
+    color = object_data["color"]
+
+    if shape == "box":
+        collision_shape = p.createCollisionShape(
+            p.GEOM_BOX,
+            halfExtents=object_data["half_extents"]
+        )
+
+        visual_shape = p.createVisualShape(
+            p.GEOM_BOX,
+            halfExtents=object_data["half_extents"],
+            rgbaColor=color
+        )
+
+    elif shape == "cylinder":
+        collision_shape = p.createCollisionShape(
+            p.GEOM_CYLINDER,
+            radius=object_data["radius"],
+            height=object_data["height"]
+        )
+
+        visual_shape = p.createVisualShape(
+            p.GEOM_CYLINDER,
+            radius=object_data["radius"],
+            length=object_data["height"],
+            rgbaColor=color
+        )
+
+    else:
+        raise ValueError(f"Unsupported shape type: {shape}")
+
+    object_id = p.createMultiBody(
+        baseMass=0.05,
+        baseCollisionShapeIndex=collision_shape,
+        baseVisualShapeIndex=visual_shape,
+        basePosition=object_data["position"]
+    )
+
+    label_position = [
+        object_data["position"][0],
+        object_data["position"][1],
+        object_data["position"][2] + 0.12
+    ]
+
+    p.addUserDebugText(
+        object_name,
+        label_position,
+        textColorRGB=[1, 1, 1],
+        textSize=1.1
+    )
+
+    return object_id
+
+
 loaded_objects = {}
 
 for object_name, object_data in OBJECTS.items():
-    loaded_objects[object_name] = p.loadURDF(
-        object_data["urdf"],
-        basePosition=object_data["position"]
-    )
+    loaded_objects[object_name] = load_workspace_object(object_name, object_data)
     print(f"{object_name} loaded at {object_data['position']}")
 
 tray_visual = p.createVisualShape(

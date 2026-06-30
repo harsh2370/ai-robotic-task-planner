@@ -9,14 +9,16 @@ from robot_controller import (
 
 
 def pick_object(object_name):
-    object_position = OBJECTS[object_name]["position"]
+    object_data = OBJECTS[object_name]
+    object_position = object_data["position"]
 
     x = object_position[0]
     y = object_position[1]
+    pick_height = object_data.get("pick_height", 0.06)
 
-    move_robot([x, y, 0.18])
+    move_robot([x, y, pick_height + 0.12])
     open_gripper()
-    move_robot([x, y, 0.06])
+    move_robot([x, y, pick_height])
     close_gripper()
     attach_object(object_name)
     move_robot([x, y, 0.25])
