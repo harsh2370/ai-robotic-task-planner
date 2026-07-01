@@ -12,7 +12,7 @@ sys.path.append(str(SIMULATION_DIR))
 
 from command_runner import parse_command
 from llm_planner import get_task_plan_from_llm
-from plan_validator import validate_task_plan
+from plan_validator import validate_task_plan, validate_task_plan_with_errors
 from execution_logger import log_execution, read_recent_logs
 from world import OBJECTS, LOCATIONS 
 
@@ -55,7 +55,7 @@ def generate_task_plan(command):
     else:
         task_plan = parse_command(command)
 
-    validation_passed = validate_task_plan(task_plan)
+    validation_passed, validation_messages = validate_task_plan_with_errors(task_plan)
 
     log_execution(
         command=command,
@@ -64,7 +64,7 @@ def generate_task_plan(command):
         validation_passed=validation_passed
     )
 
-    return planner_used, task_plan, validation_passed
+    return planner_used, task_plan, validation_passed, validation_messages
 
 def launch_simulation(command):
     test_file = SIMULATION_DIR / "test.py"
@@ -88,7 +88,7 @@ def index():
         action = request.form.get("action")
         print("Frontend action received:", action)
 
-        planner_used, task_plan, validation_passed = generate_task_plan(command)
+        planner_used, task_plan, validation_passed, validation_messages = generate_task_plan(command)
 
         execution_status = None
 
@@ -104,6 +104,7 @@ def index():
             "planner_used": planner_used,
             "task_plan": json.dumps({"steps": task_plan}, indent=4),
             "validation_passed": validation_passed,
+            "validation_messages": validation_messages,
             "execution_status": execution_status
         }
     recent_logs = read_recent_logs()

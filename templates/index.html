@@ -297,6 +297,24 @@
             font-weight: 700;
         }
 
+        .validation-details {
+            padding: 13px 15px;
+            border-radius: 14px;
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .validation-details div {
+            margin-bottom: 4px;
+        }
+
+        .validation-details div:last-child {
+            margin-bottom: 0;
+        }
+
         .execution-box {
             margin-top: 10px;
             padding: 13px 15px;
@@ -570,6 +588,17 @@
                     <span class="status-fail">Failed</span>
                 {% endif %}
             </div>
+
+            {% if result.validation_messages %}
+            <div class="info-row">
+                <div class="label">Validation Details</div>
+                <div class="validation-details">
+                    {% for message in result.validation_messages %}
+                        <div>{{ message }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
 
             {% if result.execution_status %}
             <div class="info-row">

@@ -30,3 +30,9 @@
 {"timestamp": "2026-06-30 23:27:06", "command": "move the bottle to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "bottle"}, {"action": "place", "location": "tray"}], "validation_passed": true}
 {"timestamp": "2026-06-30 23:33:03", "command": "move the spoon to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "spoon"}, {"action": "place", "location": "tray"}], "validation_passed": true}
 {"timestamp": "2026-06-30 23:33:14", "command": "move the spoon to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "spoon"}, {"action": "place", "location": "tray"}], "validation_passed": true}
+{"timestamp": "2026-07-01 21:30:06", "command": "move the phone to the tray", "planner_used": "rule_based_fallback", "task_plan": [], "validation_passed": false}
+{"timestamp": "2026-07-01 21:31:11", "command": "move the phone to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "phone"}, {"action": "place", "location": "tray"}], "validation_passed": false}
+{"timestamp": "2026-07-01 21:35:57", "command": "move the phone to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "phone"}, {"action": "place", "location": "tray"}], "validation_passed": false}
+{"timestamp": "2026-07-01 21:36:14", "command": "move the phone to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "phone"}, {"action": "place", "location": "tray"}], "validation_passed": false}
+{"timestamp": "2026-07-01 21:36:25", "command": "move the phone to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "phone"}, {"action": "place", "location": "tray"}], "validation_passed": false}
+{"timestamp": "2026-07-01 21:36:40", "command": "move the phone to the tray", "planner_used": "llm", "task_plan": [{"action": "pick", "object": "phone"}, {"action": "place", "location": "tray"}], "validation_passed": false}
